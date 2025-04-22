@@ -3,216 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario Interactivo</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-        
-        .calendar {
-            width: 100%;
-            max-width: 400px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: #4285f4;
-            color: white;
-        }
-        
-        .calendar-header button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        
-        .calendar-header button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .calendar-title {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        .calendar-weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            background: #f1f1f1;
-            padding: 10px 0;
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        .calendar-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            padding: 10px;
-        }
-        
-        .day {
-            aspect-ratio: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .day:hover {
-            background: #e0e0e0;
-        }
-        
-        .day.today {
-            background: #4285f4;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .day.other-month {
-            color: #aaa;
-        }
-        
-        .day.selected {
-            background: #34a853;
-            color: white;
-        }
-    </style>
+    <title>El Imperio de la Espuma - Productos de limpieza profesional</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="calendar">
-        <div class="calendar-header">
-            <button id="prev-month">&lt;</button>
-            <div class="calendar-title" id="month-year">Mes Año</div>
-            <button id="next-month">&gt;</button>
-        </div>
-        <div class="calendar-weekdays">
-            <div>Lun</div>
-            <div>Mar</div>
-            <div>Mié</div>
-            <div>Jue</div>
-            <div>Vie</div>
-            <div>Sáb</div>
-            <div>Dom</div>
-        </div>
-        <div class="calendar-days" id="calendar-days"></div>
-    </div>
+    <!-- Menú de navegación -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>EL IMPERIO DE LA ESPUMA</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="#comentarios">Comentarios</a></li>
+            </ul>
+            <div class="burger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const calendarDays = document.getElementById('calendar-days');
-            const monthYear = document.getElementById('month-year');
-            const prevMonth = document.getElementById('prev-month');
-            const nextMonth = document.getElementById('next-month');
-            
-            let currentDate = new Date();
-            let selectedDate = null;
-            
-            function renderCalendar() {
-                const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-                const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-                const startingDay = firstDayOfMonth.getDay();
-                // Ajuste para que la semana comience en lunes
-                const startingDayAdjusted = startingDay === 0 ? 6 : startingDay - 1;
-                
-                // Mes y año actual
-                const options = { month: 'long', year: 'numeric' };
-                monthYear.textContent = currentDate.toLocaleDateString('es-ES', options).toUpperCase();
-                
-                // Limpiar días del calendario
-                calendarDays.innerHTML = '';
-                
-                // Días del mes anterior
-                const prevMonthLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
-                for (let i = 0; i < startingDayAdjusted; i++) {
-                    const dayElement = document.createElement('div');
-                    dayElement.classList.add('day', 'other-month');
-                    dayElement.textContent = prevMonthLastDay - startingDayAdjusted + i + 1;
-                    calendarDays.appendChild(dayElement);
-                }
-                
-                // Días del mes actual
-                const today = new Date();
-                for (let i = 1; i <= daysInMonth; i++) {
-                    const dayElement = document.createElement('div');
-                    dayElement.classList.add('day');
-                    dayElement.textContent = i;
-                    
-                    // Comprobar si es hoy
-                    if (i === today.getDate() && 
-                        currentDate.getMonth() === today.getMonth() && 
-                        currentDate.getFullYear() === today.getFullYear()) {
-                        dayElement.classList.add('today');
-                    }
-                    
-                    // Comprobar si está seleccionado
-                    if (selectedDate && 
-                        i === selectedDate.getDate() && 
-                        currentDate.getMonth() === selectedDate.getMonth() && 
-                        currentDate.getFullYear() === selectedDate.getFullYear()) {
-                        dayElement.classList.add('selected');
-                    }
-                    
-                    dayElement.addEventListener('click', function() {
-                        selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
-                        renderCalendar();
-                    });
-                    
-                    calendarDays.appendChild(dayElement);
-                }
-                
-                // Días del siguiente mes
-                const totalCells = startingDayAdjusted + daysInMonth;
-                const remainingCells = totalCells <= 35 ? 35 - totalCells : 42 - totalCells;
-                
-                for (let i = 1; i <= remainingCells; i++) {
-                    const dayElement = document.createElement('div');
-                    dayElement.classList.add('day', 'other-month');
-                    dayElement.textContent = i;
-                    calendarDays.appendChild(dayElement);
-                }
-            }
-            
-            // Event listeners para cambiar de mes
-            prevMonth.addEventListener('click', function() {
-                currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-                renderCalendar();
-            });
-            
-            nextMonth.addEventListener('click', function() {
-                currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-                renderCalendar();
-            });
-            
-            // Renderizar calendario inicial
-            renderCalendar();
-        });
-    </script>
+    <!-- Portada -->
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <h2>LIMPIEZA PROFESIONAL DE CALIDAD</h2>
+            <p>Productos químicos profesionales para todo tipo de superficies</p>
+            <a href="#productos" class="btn">Ver Productos</a>
+        </div>
+    </section>
+
+    <!-- Sección Nosotros -->
+    <section id="nosotros" class="about">
+        <div class="container">
+            <h2 class="section-title">NOSOTROS</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>El Imperio de la Espuma es una empresa familiar con más de 15 años de experiencia en el mercado de productos de limpieza. Nos especializamos en la fabricación y distribución de productos químicos de alta calidad para el hogar y la industria.</p>
+                    <p>Nuestra misión es proveer soluciones efectivas de limpieza que hagan más fácil la vida de nuestros clientes, cuidando el medio ambiente y garantizando resultados impecables.</p>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Fábrica de productos de limpieza">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Productos -->
+    <section id="productos" class="products">
+        <div class="container">
+            <h2 class="section-title">NUESTROS PRODUCTOS</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-window-restore"></i>
+                    </div>
+                    <h3>Limpia Vidrios</h3>
+                    <p>Fórmula especial que elimina manchas y deja tus ventanas impecables sin dejar residuos.</p>
+                </div>
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-soap"></i>
+                    </div>
+                    <h3>Desengrasante</h3>
+                    <p>Potente acción contra grasa en cocinas, motores y superficies industriales.</p>
+                </div>
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-bacteria"></i>
+                    </div>
+                    <h3>Desinfectante</h3>
+                    <p>Elimina el 99.9% de bacterias y virus, ideal para baños y áreas comunes.</p>
+                </div>
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-hand-sparkles"></i>
+                    </div>
+                    <h3>Alcohol</h3>
+                    <p>Alcohol etílico en diferentes concentraciones para desinfección rápida.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Contacto -->
+    <section id="contacto" class="contact">
+        <div class="container">
+            <h2 class="section-title">CONTÁCTANOS</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Información de contacto</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Av. Limpieza 1234, Ciudad Espuma</p>
+                    <p><i class="fas fa-phone"></i> +54 11 1234-5678</p>
+                    <p><i class="fas fa-envelope"></i> info@elimperiodelaespuma.com</p>
+                    <p><i class="fas fa-clock"></i> Lunes a Viernes: 9:00 - 18:00</p>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <input type="text" id="name" placeholder="Nombre completo" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" placeholder="Correo electrónico" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="phone" placeholder="Teléfono">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" rows="5" placeholder="Tu mensaje" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Enviar Mensaje</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Comentarios -->
+    <section id="comentarios" class="testimonials">
+        <div class="container">
+            <h2 class="section-title">COMENTARIOS DE CLIENTES</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        <p>"Los productos de El Imperio de la Espuma son los mejores que he usado en mi negocio. El desengrasante es simplemente increíble."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <h4>Carlos M.</h4>
+                        <p>Dueño de restaurante</p>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        <p>"El limpia vidrios deja mis ventanas impecables sin esfuerzo. Ya no uso otra marca en mi casa."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <h4>María L.</h4>
+                        <p>Cliente residencial</p>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        <p>"Como empresa de limpieza profesional, confiamos en sus productos por su calidad y consistencia."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <h4>Limpieza Total S.A.</h4>
+                        <p>Empresa de servicios</p>
+                    </div>
+                </div>
+            </div>
+            <div class="add-comment">
+                <h3>Deja tu comentario</h3>
+                <form id="commentForm">
+                    <div class="form-group">
+                        <input type="text" id="commentName" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="commentText" rows="3" placeholder="Tu comentario" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Publicar Comentario</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pie de página -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>EL IMPERIO DE LA ESPUMA</h3>
+                    <p>Productos de limpieza profesional</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Enlaces rápidos</h4>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#nosotros">Nosotros</a></li>
+                        <li><a href="#productos">Productos</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h4>Síguenos</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 El Imperio de la Espuma. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
